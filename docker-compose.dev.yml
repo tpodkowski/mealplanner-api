@@ -4,7 +4,7 @@ services:
     container_name: mealplanner-api
     build:
       context: .
-      dockerfile: Dockerfile
+      target: development
     ports:
       - 3000:3000
     links:
@@ -12,9 +12,9 @@ services:
     env_file:
       - .env
     volumes:
-      - .:/usr/src/app
-      - /usr/src/app/node_modules
-
+      - .:/app
+      - /app/node_modules
+    command: yarn run start:dev
   postgres:
     container_name: postgres
     image: postgres:latest
@@ -26,6 +26,6 @@ services:
       POSTGRES_DB: ${DB_DATABASE_NAME}
     volumes:
       - db-data:/var/lib/postgresql/data
-    
+
 volumes:
   db-data:
