@@ -3,12 +3,14 @@
 # https://hub.docker.com/r/library/node/tags/
 image: node:latest
 
+variables:
+  POSTGRES_DB: mealplanner
+  POSTGRES_PASSWORD: "secret"
+  
 # Pick zero or more services to be used on all builds.
 # Only needed when using a docker container to run your tests in.
 # Check out: http://docs.gitlab.com/ee/ci/docker/using_docker_images.html#what-is-a-service
 services:
-  - mysql:latest
-  - redis:latest
   - postgres:latest
 
 # This folder is cached between builds
@@ -17,12 +19,7 @@ cache:
   paths:
     - node_modules/
 
-test_async:
+test:
   script:
-    - npm install
-    - node ./specs/start.js ./specs/async.spec.js
-
-test_db:
-  script:
-    - npm install
-    - node ./specs/start.js ./specs/db-postgres.spec.js
+    - yarn install
+    - yarn run test
