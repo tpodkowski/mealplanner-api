@@ -35,7 +35,7 @@ export class UsersService {
     const usersSalt = await genSalt(saltRounds);
     const usersHash = await hash(createUserDto.password, usersSalt);
 
-    const user = await this.prisma.users.create({
+    const user = await this.prisma.user.create({
       data: {
         ...createUserDto,
         password: usersHash,
@@ -47,7 +47,7 @@ export class UsersService {
   }
 
   async findByEmail(email: string): Promise<User | undefined> {
-    return await this.prisma.users.findFirst({
+    return await this.prisma.user.findFirst({
       where: { email },
     });
   }

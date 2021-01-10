@@ -18,7 +18,7 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    const payload = { email: validUser.email, sub: validUser.userId };
+    const payload = { email: validUser.email, sub: validUser.id };
 
     return {
       access_token: this.jwtService.sign(payload),
