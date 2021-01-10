@@ -1,5 +1,5 @@
 # DEVELOPMENT
-FROM node:latest As development
+FROM node:15.5.1 As development
 
 WORKDIR /app
 
@@ -13,7 +13,7 @@ RUN yarn run build
 RUN npx prisma generate
 
 # PRODUCTION
-FROM node:latest AS production
+FROM node:15.5.1 AS production
 
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}

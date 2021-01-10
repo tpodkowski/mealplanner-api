@@ -7,14 +7,23 @@ import { UpdateProductDto } from './dto/update-product.dto';
 export class ProductsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createProductDto: CreateProductDto) {
-    return await this.prisma.product.create({
-      data: createProductDto,
+  async create(user, createProductDto: CreateProductDto) {
+    return await this.prisma.user.update({
+      where: {
+        id: user.id,
+      },
+      data: {
+        products: {
+          create: createProductDto,
+        },
+      },
     });
   }
 
-  async findAll() {
-    return await this.prisma.product.findMany();
+  async findAll(user) {
+    return await this.prisma.product.findMany({
+      where: { authorId: user.id },
+    });
   }
 
   async findOne(id: number) {
