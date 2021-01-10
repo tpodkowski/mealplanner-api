@@ -31,3 +31,12 @@ model RecipeProducts {
   
   @@id([productId, recipeId])
 }
+
+model Users {
+  id          Int      @id @default(autoincrement())
+  firstName   String
+  lastName    String
+  email       String   @unique
+  password    String
+  isAdmin     Boolean
+}

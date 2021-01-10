@@ -1,23 +1,54 @@
 import { Injectable } from '@nestjs/common';
-
-type User = any;
-
+import { StringFilter } from '@prisma/client';
+import { genSalt, hash, compare } from 'bcrypt';
+import { StringDecoder } from 'string_decoder';
+import { PrismaService } from '../services';
+import { CreateUserDto } from './dto/create-user.dto';
+import { User } from './entities/user.entity';
 @Injectable()
 export class UsersService {
-  private readonly users = [
-    {
-      userId: 1,
-      username: 'john',
-      password: 'changeme',
-    },
-    {
-      userId: 2,
-      username: 'maria',
-      password: 'guess',
-    },
-  ];
+  constructor(private prisma: PrismaService) {}
 
-  async findOne(username: string): Promise<User | undefined> {
-    return this.users.find((user) => user.username === username);
+  private getUserResponse(user: User) {
+    const { password, isAdmin, ...result } = user;
+
+    return result;
+  }
+
+  async validateUser(email: string, password: string): Promise<any> {
+    const user = await this.findByEmail(email);
+
+    if (!user) {
+      return null;
+    }
+
+    const isPasswordValid = await compare(password, user.password);
+
+    if (isPasswordValid) {
+      return this.getUserResponse(user);
+    }
+    return null;
+  }
+
+  async create(createUserDto: CreateUserDto) {
+    const saltRounds = 10;
+    const usersSalt = await genSalt(saltRounds);
+    const usersHash = await hash(createUserDto.password, usersSalt);
+
+    const user = await this.prisma.users.create({
+      data: {
+        ...createUserDto,
+        password: usersHash,
+        isAdmin: false,
+      },
+    });
+
+    return this.getUserResponse(user);
+  }
+
+  async findByEmail(email: string): Promise<User | undefined> {
+    return await this.prisma.users.findFirst({
+      where: { email },
+    });
   }
 }
