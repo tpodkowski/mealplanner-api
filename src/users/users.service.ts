@@ -1,7 +1,6 @@
-import { Injectable } from '@nestjs/common';
-import { StringFilter } from '@prisma/client';
+import { Injectable, BadRequestException } from '@nestjs/common';
+import { validateOrReject } from 'class-validator';
 import { genSalt, hash, compare } from 'bcrypt';
-import { StringDecoder } from 'string_decoder';
 import { PrismaService } from '../services';
 import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
@@ -34,7 +33,6 @@ export class UsersService {
     const saltRounds = 10;
     const usersSalt = await genSalt(saltRounds);
     const usersHash = await hash(createUserDto.password, usersSalt);
-
     const user = await this.prisma.user.create({
       data: {
         ...createUserDto,

@@ -3,6 +3,7 @@ import { AuthService } from './auth';
 import { Public } from './common/decorators';
 import { UsersService } from './users/users.service';
 import { CreateUserDto } from './users/dto/create-user.dto';
+import { LoginUserDto } from './users/dto/login-user.dto';
 @Controller()
 export class AppController {
   constructor(
@@ -18,8 +19,8 @@ export class AppController {
 
   @Public()
   @Post('login')
-  async login(@Request() req) {
-    return this.authService.login(req.body);
+  async login(@Body() loginUserDto: LoginUserDto) {
+    return this.authService.login(loginUserDto);
   }
 
   @Public()
